@@ -22,8 +22,7 @@ namespace FSM
         IEnumerator TurnDelay()
         {
             _turning = true;
-            Debug.Log("Turning");
-            _agent.AgentIdle();
+            _agent.Idle();
             yield return new WaitForSeconds(2f); //TODO: Get delay from weapon type
             _agent.transform.localScale = new Vector3(_agent.transform.localScale.x * -1, 1, 1);
             _turning = false;
@@ -35,14 +34,13 @@ namespace FSM
             Debug.Log(_agent.transform.parent.name + " Entering Search state");
         }
 
-
         public override void OnExit()
         {
             //TODO: Target and stop this particular routine.
             _agent.StopAllCoroutines();
         }
 
-        public override void Update()
+        public override void Tick()
         {
         }
     }

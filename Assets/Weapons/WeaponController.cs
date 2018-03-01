@@ -7,7 +7,10 @@ public class WeaponController : MonoBehaviour
 {
     private SkeletonAnimation _animator = null;
     
-    [SerializeField] private Weapon _currentWeapon = null;
+    [SerializeField]
+    private Weapon _currentWeapon = null;
+    public Weapon Current { get { return _currentWeapon; } set { _currentWeapon = value; } }
+
     [SerializeField] private Weapon _backupWeapon = null;
     [SerializeField] private BoxCollider2D _swordHitbox = null;
     [SerializeField] private Transform _gunSpawn = null;
@@ -18,11 +21,7 @@ public class WeaponController : MonoBehaviour
     public GameObject BulletPrefab { get { return _bulletPrefab; } set { _bulletPrefab = value; } }
     public Transform GunSpawn { get { return _gunSpawn; } set { _gunSpawn = value; } }
 
-    public Weapon Current
-    {
-        get { return _currentWeapon; }
-        set { _currentWeapon = value; }
-    }
+
 
     public Weapon Backup
     {
@@ -31,6 +30,7 @@ public class WeaponController : MonoBehaviour
     }
 
     public bool WeaponDrawn { get; set; }
+    public bool IsReloading { get; internal set; }
 
     public void ToggleWeapon()
     {
@@ -52,6 +52,12 @@ public class WeaponController : MonoBehaviour
             Current.DrawWeapon(this, _animator);
         else
             Current.HolsterWeapon(this, _animator);
+    }
+
+    public void Reload()
+    {
+        if (!IsReloading)
+            Current.ReloadWeapon(this, _animator);
     }
 
     private void Awake()

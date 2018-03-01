@@ -13,7 +13,7 @@ namespace FSM
         public override void OnEnter(AgentController agent)
         {
             _agent = agent;
-            _agent.AgentDrawWeapon(false);
+            _agent.DrawWeapon(false);
             _agent.gameObject.layer = 17;
             _agent.GetComponent<Rigidbody2D>().isKinematic = true;
             
@@ -34,7 +34,7 @@ namespace FSM
 
         }
 
-        public override void Update()
+        public override void Tick()
         {
         }
 

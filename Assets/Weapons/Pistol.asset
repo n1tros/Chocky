@@ -17,3 +17,9 @@ MonoBehaviour:
     type: 2}
   _bulletSpeed: 30
   _knockbackForce: 1
+  _range: 50
+  _baseMaxAmmo: 300
+  _baseMaxClip: 30
+  _currentTotalAmmo: 270
+  _currentAmmoInClip: 25
+  _currentMaxClip: 30

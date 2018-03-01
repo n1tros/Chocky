@@ -18,3 +18,10 @@ MonoBehaviour:
   _bulletSpeed: 30
   _knockbackForce: 10
   _range: 50
+  _baseMaxAmmo: 300
+  _baseMaxClip: 30
+  _currentTotalAmmo: 300
+  _currentAmmoInClip: 11
+  _currentMaxClip: 30
+  _currentMaxAmmo: 300
+  infinateAmmo: 1

@@ -69,7 +69,12 @@ public class AIController : MonoBehaviour
     public void Idle()
     {
         _stateMachine.ChangeState(AIStateType.AIIdle);
-        _agent.AgentIdle();
+        _agent.Idle();
+    }
+
+    public void Search()
+    {
+        _stateMachine.ChangeState(AIStateType.AISearch);
     }
 
     public void TargetAgent(AgentController agent)

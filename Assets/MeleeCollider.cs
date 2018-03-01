@@ -19,8 +19,7 @@ public class MeleeCollider : MonoBehaviour
         {
             _weapons.MeleeCollider.enabled = false;
             //TODO: The actual damage dealt will be the BaseDamage x buffs x skills
-            Debug.Log(_agent.tag + " Hits " + collision.transform.root.tag + " For " + -_weapons.Current.BaseDamage + " Damage.");
-            collision.GetComponentInParent<AgentController>().AgentTakeDamage(-_weapons.Current.BaseDamage);
+            collision.GetComponentInParent<AgentController>().TakeDamage(-_weapons.Current.BaseDamage);
             //TODO: Decide knockback force and apply it, this should be based on weapon damage + size of player
             Vector2 knockBackDir = (collision.transform.position - transform.position).normalized * 20;
             knockBackDir.y = 1f;

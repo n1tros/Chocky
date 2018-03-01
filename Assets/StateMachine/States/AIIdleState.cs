@@ -12,14 +12,14 @@ namespace FSM
         {
             Debug.Log("Entering AIIdleState");
             _rigid = agent.GetComponent<Rigidbody2D>();
-            agent.AgentIdle();
+            agent.Idle();
         }
 
         public override void OnExit()
         {
         }
 
-        public override void Update()
+        public override void Tick()
         {
         }
 

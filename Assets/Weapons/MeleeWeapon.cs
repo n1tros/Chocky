@@ -14,13 +14,22 @@ public class MeleeWeapon : Weapon
     [SerializeField] private float _firstSwingSpeed = 1.2f;
     [SerializeField] private float _secondSwingSpeed = 1.5f;
 
-    private WeaponType _type = WeaponType.Melee;    
+    private WeaponType _type = WeaponType.Melee;
+    private AmmoType _ammo = AmmoType.Melee;
+
     private bool _firstSwing = false, _secondSwing = false;
 
     public override float BaseDamage { get { return _baseDamage; } }
     public override float Range { get; set; }
     public override float CurrentAttackTime { get; set; }
     public override WeaponType Type { get { return _type; } set { _type = value; } }
+    public override AmmoType Ammo { get { return _ammo; } set { _ammo = value; } }
+    public override int BaseMaxAmmo { get; set; }
+    public override int BaseMaxClip { get; set; }
+    public override int CurrentTotalAmmo { get; set; }
+    public override int CurrentAmmoInClip { get; set; }
+    public override int CurrentMaxClip { get; set; }
+    public override int CurrentMaxAmmo { get; set; }
 
 
     public override void DrawWeapon(WeaponController controller, SkeletonAnimation animator)
@@ -90,5 +99,10 @@ public class MeleeWeapon : Weapon
     {
         _firstSwing = false;
         _secondSwing = false;
+    }
+
+    public override void ReloadWeapon(WeaponController controller, SkeletonAnimation animator)
+    {
+        Debug.Log("Cannot reload a Sword!.......... Yet");
     }
 }

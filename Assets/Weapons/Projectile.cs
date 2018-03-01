@@ -16,25 +16,23 @@ public class Projectile : MonoBehaviour
     void Start ()
     {
         Rigid = GetComponent<Rigidbody2D>();
-
 	}
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.tag + " " + Owner);
         if (collision.CompareTag("HitBox") && Owner != collision.GetComponentInParent<WeaponController>().tag)
         {
-            collision.GetComponentInParent<AgentController>().AgentTakeDamage(Damage);
+            collision.GetComponentInParent<AgentController>().TakeDamage(Damage);
             Vector2 knockBackDir = (collision.transform.position - transform.position).normalized * KnockBackForce;
             knockBackDir.y = 1f;
             Destroy(gameObject);
         } 
+
         // TODO: Draw an array of layers bullet should be destroyed by.
         else if (collision.CompareTag("Ground") || collision.CompareTag("Wall"))
         {
             Debug.Log("true");
             Destroy(gameObject);
         }
-
     }
 }

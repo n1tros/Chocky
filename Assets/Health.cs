@@ -21,7 +21,7 @@ public class Health : MonoBehaviour
             }
             else
                 _currentHealth = value;
-
+            
             UpdateHealthBar();
         }
     }
@@ -32,7 +32,6 @@ public class Health : MonoBehaviour
         {
             return _currentHealth / _maxHealth;
         }
-
     }
 
     public void UpdateHealthBar()
@@ -50,7 +49,6 @@ public class Health : MonoBehaviour
     private void SetHealth(float amount)
     {
         CurrentHealth = CurrentHealth + amount;
-        Debug.Log("damage taken " + amount);
     }
 
     // Use this for initialization

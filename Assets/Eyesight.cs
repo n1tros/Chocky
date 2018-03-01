@@ -17,14 +17,10 @@ public class Eyesight : MonoBehaviour
         Debug.Log(transform.root.gameObject.name + " trigger enter " + collision.name);
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("player Collision true");
             var player = collision.GetComponent<AgentController>();
-            Debug.Log("Player: " + player.ToString());
             bool sightBlocked = Physics2D.Linecast(transform.position, player.transform.position + new Vector3(0,1f), _intercepts);
-            Debug.Log("Sightblocked: " + sightBlocked);
             var layerhit = Physics2D.Linecast(transform.position, player.transform.position + new Vector3(0,1f), _intercepts);
-            if (layerhit)
-                Debug.Log("Layer hit: " + layerhit.collider.name);
+
             Debug.DrawLine(transform.position, player.transform.position + new Vector3(0, 1f), Color.red, 5f);
             //TODO: Currently If an intercept is hit it doesn't calculate if it is in front or behind.
 

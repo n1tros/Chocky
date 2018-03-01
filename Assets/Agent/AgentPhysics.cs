@@ -44,11 +44,10 @@ public class AgentPhysics : MonoBehaviour
     public void FixedUpdate()
     {
         if (_agentController.CurrentState != MovementStateType.Roll && _rigidbody.velocity.y < -0.1)
-            _agentController.AgentFall();
+            _agentController.Fall();
 
         if (_agentController.CurrentState == MovementStateType.Death)
             ZeroVelocity();
-
     }
 
     public void EndRoll()

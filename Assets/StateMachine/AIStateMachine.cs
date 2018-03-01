@@ -34,7 +34,7 @@ namespace FSM
 
         public void Update()
         {
-            _currentState.Update();
+            _currentState.Tick();
         }
 
         public void FixedUpdate()

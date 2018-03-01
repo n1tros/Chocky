@@ -11,6 +11,11 @@ public class PlayerHealthBar : MonoBehaviour
     [SerializeField] AgentController _player;
     Health _playerHealth;
 
+    private void Awake()
+    {
+        if (gameObject.tag != "UI")
+            _player = GetComponentInParent<AgentController>();
+    }
     // Use this for initialization
     void Start()
     {
@@ -23,4 +28,6 @@ public class PlayerHealthBar : MonoBehaviour
         float xValue = -(currentHealth / 2f) - 0.5f;
         _healthBarRawImage.uvRect = new Rect(xValue, 0f, 0.5f, 1f);
     }
+
+
 }

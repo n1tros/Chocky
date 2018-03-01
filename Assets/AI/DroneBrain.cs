@@ -13,6 +13,7 @@ public class DroneBrain : Brain
     [SerializeField] private float _attackDelay = 1f;
 
     private bool _attacking, _timerActive;
+    private IEnumerator _transition;
 
     private void OnEnable()
     {
@@ -33,7 +34,7 @@ public class DroneBrain : Brain
     {
         _attacking = true;
         yield return new WaitForSeconds(_attackDelay);
-        ai.Agent.AgentAttack();
+        ai.Agent.Attack();
         _attacking = false;
     }
 
@@ -53,13 +54,16 @@ public class DroneBrain : Brain
         }
 
         if (ai.CurrentState == AIStateType.AISearch && !_timerActive)
-            ai.StartCoroutine(Transition(_searchTime, ai, AIStateType.AISearch));
+            ai.StartCoroutine(Transition(_searchTime, ai, AIStateType.AIPatrol));
 
         if (ai.CurrentState == AIStateType.AIIdle && !_timerActive)
             ai.StartCoroutine(Transition(_timeToIdle, ai, AIStateType.AIPatrol));
 
         if (ai.CurrentState == AIStateType.AIPatrol && !_timerActive)
+        {
+            Debug.Log("AI going frpom Patrol to Idle");
             ai.StartCoroutine(Transition(_timeToPatrol, ai, AIStateType.AIIdle));
+        }
 
         else if (ai.CurrentState == AIStateType.AIStart)
             ai.Patrol();
@@ -68,18 +72,38 @@ public class DroneBrain : Brain
     IEnumerator Transition(float time, AIController ai, AIStateType toState)
     {
         _timerActive = true;
-        if (toState == AIStateType.AIPatrol || toState == AIStateType.AISearch)
+        switch (toState)
         {
-            yield return new WaitForSeconds(time);
-            ai.Patrol();
-        }
-        else if (toState == AIStateType.AIIdle)
-        {
-            yield return new WaitForSeconds(time);
-            ai.Idle();
-        }
-        else
-            yield return new ArgumentException("error no such state");
+            case AIStateType.AIStart:
+                break;
+            case AIStateType.AIPatrol:
+                yield return new WaitForSeconds(time);
+                ai.Patrol();
+                break;
+            case AIStateType.AIChase:
+                break;
+            case AIStateType.AICombat:
+                break;
+            case AIStateType.AIIdle:
+                yield return new WaitForSeconds(time);
+                ai.Idle();
+                break;
+            case AIStateType.AIMeleeAttack:
+                break;
+            case AIStateType.AIRangedAttack:
+                break;
+            case AIStateType.AIDeath:
+                break;
+            case AIStateType.AIDamage:
+                break;
+            case AIStateType.AISearch:
+                yield return new WaitForSeconds(time);
+                ai.Search();
+                break;
+            default:
+                yield return new ArgumentException("error no such state");
+                break;
+        }           
     }
 
     void Reset(AIController ai)

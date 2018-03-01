@@ -22,10 +22,10 @@ namespace FSM
 
         public override void OnExit()
         {
-            _agent.AgentIdle();
+            _agent.Idle();
         }
 
-        public override void Update()
+        public override void Tick()
         {
         }
 
@@ -38,9 +38,9 @@ namespace FSM
                 _movingRight = true;
 
             if (_movingRight)
-                _agent.MoveAgent(_rightDirection);
+                _agent.Move(_rightDirection);
             else
-                _agent.MoveAgent(_leftDirection);
+                _agent.Move(_leftDirection);
         }
 
         private bool AtLeftEdge()

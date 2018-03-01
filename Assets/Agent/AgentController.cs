@@ -1,4 +1,5 @@
 ﻿using FSM;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,107 +10,107 @@ using UnityEngine;
 
 public class AgentController : MonoBehaviour
 {
-    [SerializeField] private Agent _agentType = null;
-    [SerializeField] private bool _isInvulnerable = false;
-    [SerializeField] private bool _isCollidable = true;
-    //TODO: extract this to _agentType;
-    [SerializeField] private float _rollTime = 1f;
+    [SerializeField] private AgentSettings _agentSettings = null;
 
-    public delegate void Move(float x);
-    public delegate void Jump(float x);
-    public delegate void Idle();
-    public delegate void Fall();
-    public delegate void ToggleWeapon();
-    public delegate void Attack();
-    public delegate void DrawWeapon(bool weaponOut);
-    public delegate void TakeDamage(float amount);
-    public delegate void Death();
-    public delegate void Roll(float rollSpeed);
-    public delegate void EndRoll();
-
-    public event Move OnMove;
-    public event Idle OnIdle;
-    public event Jump OnJump;
-    public event Fall OnFall;
-    public event ToggleWeapon OnToggleWeapon;
-    public event Attack OnAttack;
-    public event DrawWeapon OnDrawWeapon;
-    public event TakeDamage OnTakeDamage;
-    public event Death OnDeath;
-    public event Roll OnRoll;
-    public event EndRoll OnEndRoll;
-
+    public event Action<float> OnMove = delegate { };
+    public event Action<float> OnJump = delegate { };
+    public event Action OnIdle = delegate { };
+    public event Action OnFall = delegate { };
+    public event Action OnToggleWeapon = delegate { };
+    public event Action OnAttack = delegate { };
+    public event Action<bool> OnDrawWeapon = delegate { };
+    public event Action<float> OnTakeDamage = delegate { };
+    public event Action OnDeath = delegate { };
+    public event Action<float> OnRoll = delegate { };
+    public event Action OnEndRoll = delegate { };
+    
     public MovementStateType CurrentState { get; set; }
     public MovementStateType PreviousState { get; set; }
 
     public bool IsGrounded { get; set; }
-    public bool IsInvulnerable { get { return _isInvulnerable; } set { _isInvulnerable = value; } }
-
-    
+    public bool IsInvulnerable { get; set; }
+ 
     private float _switchWeaponDelay = 0.2f;
     private bool _switchingWeapon, _rollTimerActive = false;
 
     private void Start()
     {
-        AgentIdle();
-        CurrentState = MovementStateType.Idle;
+        Idle();
     }
 
-    public void MoveAgent(float xDirection)
+    public void Idle()
     {
-        if (Immobile())
-            return;
-
-        if (AgentOnGround())
-            ChangeState(MovementStateType.Movement);
-
-        OnMove(xDirection * _agentType.MoveSpeed);
-    }
-
-    private bool Immobile()
-    {
-        return CurrentState == MovementStateType.Damage || CurrentState == MovementStateType.Death || CurrentState == MovementStateType.Roll;
-    }
-
-    public void AgentIdle()
-    {
-
-        if ((AgentOnGround() || CurrentState == MovementStateType.Start) && !Immobile())
+        if ((Grounded() || CurrentState == MovementStateType.Start) && !Immobile())
         {
             ChangeState(MovementStateType.Idle);
             OnIdle();
         }
     }
 
-    public void AgentJump()
+    public void Move (float direction)
     {
-        if (CurrentState != MovementStateType.Jumping && 
-            CurrentState != MovementStateType.Falling && 
-            CurrentState != MovementStateType.Damage &&
-            CurrentState != MovementStateType.Death &&
-            CurrentState != MovementStateType.Roll)
-            {
-                IsGrounded = false;
-                ChangeState(MovementStateType.Jumping);
-                OnJump(_agentType.JumpHeight);
-            }
+        if (Immobile())
+            return;
+
+        if (Grounded())
+            ChangeState(MovementStateType.Movement);
+
+        OnMove(direction * _agentSettings.MoveSpeed);
     }
 
-    public void AgentFall()
+    private bool Immobile()
     {
-        if ((CurrentState == MovementStateType.Jumping || CurrentState == MovementStateType.Roll || CurrentState == MovementStateType.Movement) && !AgentOnGround() )
+        return CurrentState == MovementStateType.Damage 
+            || CurrentState == MovementStateType.Death 
+            || CurrentState == MovementStateType.Roll;
+    }
+
+    public void Jump()
+    {
+        if (CanJump())
+        {
+            IsGrounded = false;
+            ChangeState(MovementStateType.Jumping);
+            OnJump(_agentSettings.JumpHeight);
+        }
+    }
+
+    private bool CanJump()
+    {
+        return CurrentState != MovementStateType.Jumping 
+            && CurrentState != MovementStateType.Falling 
+            && !Immobile();
+    }
+
+    public void Fall()
+    {
+        if (InMotion() && !Grounded())
         {
             ChangeState(MovementStateType.Falling);
             OnFall();
         }
     }
 
-    public void AgentLand()
+    private bool InMotion()
+    {
+        return CurrentState == MovementStateType.Jumping
+            || CurrentState == MovementStateType.Roll
+            || CurrentState == MovementStateType.Movement;
+    }
+
+    public bool Grounded()
+    {
+        return IsGrounded 
+            && CurrentState != MovementStateType.Jumping 
+            && CurrentState != MovementStateType.Falling;
+    }
+
+    public void Land()
     {
         ChangeState(MovementStateType.Movement);
     }
 
-    public void AgentToggleWeapon()
+    public void ToggleWeapon()
     {
         if (!_switchingWeapon && (CurrentState != MovementStateType.Damage && CurrentState != MovementStateType.Death))
             StartCoroutine(ToggleWeaponDelay());
@@ -118,36 +119,37 @@ public class AgentController : MonoBehaviour
     IEnumerator ToggleWeaponDelay()
     {
         _switchingWeapon = true;
-
-        yield return new WaitForSeconds(_switchWeaponDelay);
-                
+        yield return new WaitForSeconds(_switchWeaponDelay);             
         OnToggleWeapon();
         _switchingWeapon = false;
     }
 
-    public void AgentAttack()
+    public void Attack()
     {
         if (CurrentState != MovementStateType.Death)
             OnAttack();
     }
 
-    public bool AgentOnGround()
-    {
-        return IsGrounded && CurrentState != MovementStateType.Jumping && CurrentState != MovementStateType.Falling;
-    }
-
-    public void AgentDrawWeapon(bool weaponOut)
+    public void DrawWeapon(bool weaponOut)
     {
         OnDrawWeapon(weaponOut);
     }
 
-    public void AgentTakeDamage(float amount)
+    public void TakeDamage(float amount)
     {
         if (CurrentState != MovementStateType.Death && !IsInvulnerable)
         {
             ChangeState(MovementStateType.Damage);
-            OnTakeDamage(amount);
+            StartCoroutine(InvulnerableTimer(amount));
         }
+    }
+
+    IEnumerator InvulnerableTimer(float amount)
+    {
+        IsInvulnerable = true;
+        OnTakeDamage(amount);
+        yield return new WaitForSeconds(_agentSettings.InvulnerabilityTime);
+        IsInvulnerable = false;
     }
 
     public void AgentPreviousState()
@@ -162,40 +164,39 @@ public class AgentController : MonoBehaviour
         OnDeath();
     }
 
-    public void AgentRoll()
+    public void Roll()
     {
         if (!Immobile() && !_rollTimerActive)
         {
             IsInvulnerable = true;
             StartCoroutine(RollTimer());
-        }
-            
+        }         
     }
 
     IEnumerator RollTimer()
     {
         _rollTimerActive = true;
-        OnMove(_agentType.RollSpeed * transform.localScale.x);
+        OnMove(_agentSettings.RollSpeed * transform.localScale.x);
         ChangeState(MovementStateType.Roll);
-        OnRoll(_agentType.RollSpeed);
-        yield return new WaitForSeconds(_rollTime);
+        OnRoll(_agentSettings.RollSpeed);
+        yield return new WaitForSeconds(_agentSettings.RollTime);
         _rollTimerActive = false;
     }
 
-    public void AgentEndRoll()
+    public void EndRoll()
     {
-        if (AgentOnGround())
+        if (Grounded())
         {
             if (PreviousState == MovementStateType.Movement)
                 ChangeState(MovementStateType.Movement);
             else
             {
                 ChangeState(MovementStateType.Idle);
-                AgentIdle();
+                Idle();
             }
         }
         else
-        { AgentFall(); Debug.Log("End roll Fall"); }
+          Fall();
 
         OnEndRoll();
         IsInvulnerable = false;
@@ -205,7 +206,6 @@ public class AgentController : MonoBehaviour
     {
         if (CurrentState != state)
         {
-            Debug.Log(gameObject.name + " now in " + state);
             PreviousState = CurrentState;
             CurrentState = state;
         }
@@ -215,7 +215,7 @@ public class AgentController : MonoBehaviour
     {
         if (CurrentState == MovementStateType.Falling && IsGrounded)
         {
-            AgentLand();
+            Land();
         }
     }
 }

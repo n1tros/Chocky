@@ -87,7 +87,7 @@ public class AgentAnimation : MonoBehaviour
     {
         if (_agentController.CurrentState == MovementStateType.Roll && _animation.state.GetCurrent(0).Animation != _rollAnimation)
         {
-            _animation.state.SetAnimation(0, _roll, false).Complete += delegate { _agentController.AgentEndRoll(); Debug.Log("Finished"); };
+            _animation.state.SetAnimation(0, _roll, false).Complete += delegate { _agentController.EndRoll(); Debug.Log("Finished"); };
         }
     }
 

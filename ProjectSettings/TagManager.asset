@@ -15,6 +15,7 @@ TagManager:
   - FOV
   - HitBox
   - Wall
+  - UI
   layers:
   - Default
   - TransparentFX

@@ -7,7 +7,7 @@ public class Damageable : MonoBehaviour
 {
     IEnumerator Hit(float damageTime, Weapon weapon, AgentController agent)
     {
-        agent.AgentTakeDamage(weapon.BaseDamage);
+        agent.TakeDamage(weapon.BaseDamage);
         yield return new WaitForSeconds(damageTime);
         agent.AgentPreviousState();
     }

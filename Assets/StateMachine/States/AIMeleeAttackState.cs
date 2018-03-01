@@ -15,21 +15,21 @@ namespace FSM
             _ai = agent.GetComponent<AIController>();
             _target = _ai.Target;
             _agent = agent;
-            _agent.AgentDrawWeapon(true);
+            _agent.DrawWeapon(true);
         }
 
         public override void FixedUpdate()
         {
             if (_ai.TargetInMeleeRange)
             {
-                _agent.AgentIdle();
-                _agent.AgentAttack();
+                _agent.Idle();
+                _agent.Attack();
             }
             else
-                _agent.MoveAgent(_agent.transform.position.x < _target.transform.position.x ? 1 : -1);
+                _agent.Move(_agent.transform.position.x < _target.transform.position.x ? 1 : -1);
         }
 
-        public override void Update()
+        public override void Tick()
         {
         }
 

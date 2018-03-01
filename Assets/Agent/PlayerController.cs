@@ -15,27 +15,27 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         if (Input.GetButtonDown(StringReference.Fire1))
-            _agent.AgentAttack();
+            _agent.Attack();
 
         if (Input.GetButtonDown(StringReference.Jump))
-            _agent.AgentJump();
+            _agent.Jump();
 
         if (Input.GetButtonDown(StringReference.WeaponToggle))
-            _agent.AgentToggleWeapon();
+            _agent.ToggleWeapon();
         
         if (Input.GetButton(StringReference.Fire3))
-            _agent.AgentRoll();
+            _agent.Roll();
     }
 
     private void FixedUpdate()
     {
         var xInput = Input.GetAxisRaw(StringReference.Horizontal);
         if ((xInput > -0.1 && xInput < 0.1) && _agent.IsGrounded)
-            _agent.AgentIdle();
+            _agent.Idle();
         else
-            _agent.MoveAgent(xInput);
+            _agent.Move(xInput);
 
         if (Input.GetAxisRaw("dPadX") < -0.5f)
-            _agent.AgentToggleWeapon();
+            _agent.ToggleWeapon();
     }
 }

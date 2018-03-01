@@ -13,7 +13,6 @@ namespace FSM
         private static State NewState(AIStateType state)
         {
             var stateType = Type.GetType(typeof(State).Namespace + "." + state.ToString() + "State", throwOnError: false);
-            Debug.Log(stateType);
 
             if (stateType == null)
                 throw new InvalidOperationException(state.ToString() + " is not a valid state");
