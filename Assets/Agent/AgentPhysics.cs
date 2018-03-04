@@ -17,11 +17,11 @@ public class AgentPhysics : MonoBehaviour
     private void Awake()
     {
         _agentController = GetComponent<AgentController>();
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     void Start ()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
         _baseLayer = gameObject.layer;
         _rollLayer = LayerMask.NameToLayer("Roll");
 	}

@@ -32,11 +32,12 @@ public class AgentAnimation : MonoBehaviour
     private void Awake()
     {
         _agentController = GetComponent<AgentController>();
+        _animation = GetComponent<SkeletonAnimation>();
+
     }
 
     private void Start()
     {
-        _animation = GetComponent<SkeletonAnimation>();
         _runAnimation = _animation.skeleton.Data.FindAnimation(_run);
         _idleAnimation = _animation.skeleton.Data.FindAnimation(_idle);
         _jumpAnimation = _animation.skeleton.Data.FindAnimation(_fall);

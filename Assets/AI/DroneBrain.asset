@@ -13,3 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _timeToIdle: 5
   _timeToPatrol: 20
+  _timeToSearch: 10
+  _searchTime: 5
+  _turnDelay: 1
+  _attackDelay: 1

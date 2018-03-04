@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Logic for changing player states and firing agent based events
+/// Fire Agent based Movement events
 /// </summary>
 
 public class AgentController : MonoBehaviour
@@ -23,18 +23,26 @@ public class AgentController : MonoBehaviour
     public event Action OnDeath = delegate { };
     public event Action<float> OnRoll = delegate { };
     public event Action OnEndRoll = delegate { };
-    
-    public MovementStateType CurrentState { get; set; }
-    public MovementStateType PreviousState { get; set; }
+
+
+
+    public State CurrentMotionState { get; private set; }
+    public State PreviousMotionState { get; private set; }
+
+    private StateMachine _stateMachine;
 
     public bool IsGrounded { get; set; }
     public bool IsInvulnerable { get; set; }
- 
+    public MovementStateType CurrentState { get; private set; }
+    public MovementStateType PreviousState { get; private set; }
+
     private float _switchWeaponDelay = 0.2f;
     private bool _switchingWeapon, _rollTimerActive = false;
 
     private void Start()
     {
+        _stateMachine = new StateMachine(this);
+
         Idle();
     }
 

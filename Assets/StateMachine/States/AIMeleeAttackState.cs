@@ -7,34 +7,29 @@ namespace FSM
 {
     public class AIMeleeAttackState : State
     {
-        AgentController _target, _agent = null;
+        AgentController _target = null;
         AIController _ai = null;
 
-        public override void OnEnter(AgentController agent)
+        public AIMeleeAttackState(AgentController agentcontoller) : base(agentcontoller)
         {
-            _ai = agent.GetComponent<AIController>();
-            _target = _ai.Target;
-            _agent = agent;
-            _agent.DrawWeapon(true);
         }
 
-        public override void FixedUpdate()
+        public override void OnEnter()
+        {
+            _ai = _agentController.GetComponent<AIController>();
+            _target = _ai.Target;
+            _agentController.DrawWeapon(true);
+        }
+
+        public override void FixedTick()
         {
             if (_ai.TargetInMeleeRange)
             {
-                _agent.Idle();
-                _agent.Attack();
+                _agentController.Idle();
+                _agentController.Attack();
             }
             else
-                _agent.Move(_agent.transform.position.x < _target.transform.position.x ? 1 : -1);
-        }
-
-        public override void Tick()
-        {
-        }
-
-        public override void OnExit()
-        {
+                _agentController.Move(_agentController.transform.position.x < _target.transform.position.x ? 1 : -1);
         }
     }
 }

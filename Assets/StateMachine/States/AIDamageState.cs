@@ -6,28 +6,20 @@ namespace FSM
 {
     public class AIDamageState : State
     {
-
         Rigidbody2D _rigid = null;
 
-        public override void OnEnter(AgentController agent)
-        {
-            Debug.Log("Entering AIDamageState");
-            _rigid = agent.GetComponent<Rigidbody2D>();
-            //agent.AgentIdle();
-        }
-
-        public override void OnExit()
+        public AIDamageState(AgentController agentcontoller) : base(agentcontoller)
         {
         }
 
-        public override void Tick()
+        public override void OnEnter()
         {
+            _rigid = _agentController.GetComponent<Rigidbody2D>();
         }
 
-        public override void FixedUpdate()
+        public override void FixedTick()
         {
             _rigid.velocity = Vector2.zero;
         }
-
     }
 }

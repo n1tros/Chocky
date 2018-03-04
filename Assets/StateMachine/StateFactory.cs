@@ -5,12 +5,12 @@ namespace FSM
 {
     public class StateFactory
     {
-        public State GetAIState(AIStateType state)
+        public State GetAIState(State state)
         {
             return NewState(state);
         }
 
-        private static State NewState(AIStateType state)
+        private static State NewState(State state)
         {
             var stateType = Type.GetType(typeof(State).Namespace + "." + state.ToString() + "State", throwOnError: false);
 

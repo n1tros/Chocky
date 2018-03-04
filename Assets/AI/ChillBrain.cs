@@ -15,4 +15,19 @@ public class ChillBrain : Brain
     {
         ai.Idle();
     }
+
+    public override void DefaultIdleTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void DefaultPatrolTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void DefaultSearchTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FSM;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,8 +7,30 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AIBrain/Drone")]
 public class DroneBrain : Brain
 {
-    [SerializeField] private float _timeToIdle = 0f;
-    [SerializeField] private float _timeToPatrol = 0f;
+    [SerializeField]
+    private float _timeToIdle = 0f;
+    public override float IdleTransitionTime
+    {
+        get { return _timeToIdle; }
+        internal set {}
+    }
+
+    [SerializeField]
+    private float _timeToPatrol = 0f;
+    public override float PatrolTransitionTime
+    {
+        get { return _timeToPatrol; }
+        internal set {}
+    }
+
+    [SerializeField]
+    private float _timeToSearch = 0f;
+    public override float SearchTransitionTime
+    {
+        get { return _timeToSearch; }
+        internal set { }
+    }
+
     [SerializeField] private float _searchTime = 5f;
     [SerializeField] private float _turnDelay = 1f;
     [SerializeField] private float _attackDelay = 1f;
@@ -19,6 +42,7 @@ public class DroneBrain : Brain
     {
         _timerActive = false;
         _attacking = false;
+        IdleTransitionTime = _timeToIdle;
     }
 
     public override void AttackPattern(AIController ai)
@@ -52,63 +76,24 @@ public class DroneBrain : Brain
             Reset(ai);
             return;
         }
-
-        if (ai.CurrentState == AIStateType.AISearch && !_timerActive)
-            ai.StartCoroutine(Transition(_searchTime, ai, AIStateType.AIPatrol));
-
-        if (ai.CurrentState == AIStateType.AIIdle && !_timerActive)
-            ai.StartCoroutine(Transition(_timeToIdle, ai, AIStateType.AIPatrol));
-
-        if (ai.CurrentState == AIStateType.AIPatrol && !_timerActive)
-        {
-            Debug.Log("AI going frpom Patrol to Idle");
-            ai.StartCoroutine(Transition(_timeToPatrol, ai, AIStateType.AIIdle));
-        }
-
-        else if (ai.CurrentState == AIStateType.AIStart)
-            ai.Patrol();
-    }
-
-    IEnumerator Transition(float time, AIController ai, AIStateType toState)
-    {
-        _timerActive = true;
-        switch (toState)
-        {
-            case AIStateType.AIStart:
-                break;
-            case AIStateType.AIPatrol:
-                yield return new WaitForSeconds(time);
-                ai.Patrol();
-                break;
-            case AIStateType.AIChase:
-                break;
-            case AIStateType.AICombat:
-                break;
-            case AIStateType.AIIdle:
-                yield return new WaitForSeconds(time);
-                ai.Idle();
-                break;
-            case AIStateType.AIMeleeAttack:
-                break;
-            case AIStateType.AIRangedAttack:
-                break;
-            case AIStateType.AIDeath:
-                break;
-            case AIStateType.AIDamage:
-                break;
-            case AIStateType.AISearch:
-                yield return new WaitForSeconds(time);
-                ai.Search();
-                break;
-            default:
-                yield return new ArgumentException("error no such state");
-                break;
-        }           
     }
 
     void Reset(AIController ai)
     {
-        ai.StopCoroutine("Transition");
-        _timerActive = false;
+    }
+
+    public override void DefaultIdleTransition(AIController ai)
+    {
+        ai.Patrol();
+    }
+
+    public override void DefaultPatrolTransition(AIController ai)
+    {
+        ai.Idle();
+    }
+
+    public override void DefaultSearchTransition(AIController ai)
+    {
+        ai.Patrol();
     }
 }

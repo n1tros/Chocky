@@ -10,38 +10,59 @@ namespace FSM
     /// </summary>
     public class AISearchState : State
     {
-        AgentController _agent = null;
-        bool _turning = false;
-        
-        public override void FixedUpdate()
+        IEnumerator _turningCoroutine, _transitionCoroutine;
+        AIController _ai;
+        private float _transitionTime;
+
+        public AISearchState(AgentController agentcontoller) : base(agentcontoller)
         {
-            if(!_turning)
-                _agent.StartCoroutine(TurnDelay());
+            _ai = _agentController.GetComponent<AIController>();
+            _transitionTime = _ai.CurrentBrain.SearchTransitionTime;
         }
 
-        IEnumerator TurnDelay()
+        public override void OnEnter()
         {
-            _turning = true;
-            _agent.Idle();
-            yield return new WaitForSeconds(2f); //TODO: Get delay from weapon type
-            _agent.transform.localScale = new Vector3(_agent.transform.localScale.x * -1, 1, 1);
-            _turning = false;
-        }
-
-        public override void OnEnter(AgentController agent)
-        {
-            _agent = agent;
-            Debug.Log(_agent.transform.parent.name + " Entering Search state");
-        }
-
-        public override void OnExit()
-        {
-            //TODO: Target and stop this particular routine.
-            _agent.StopAllCoroutines();
+            Debug.Log(_agentController.transform.parent.name + " Entering Search state");
         }
 
         public override void Tick()
         {
+            if (_transitionCoroutine == null)
+            {
+                _transitionCoroutine = Transition();
+                _ai.StartCoroutine(_transitionCoroutine);
+            }
+
+        }
+
+        private IEnumerator Transition()
+        {
+            yield return new WaitForSeconds(_transitionTime);
+            _ai.CurrentBrain.DefaultSearchTransition(_ai);
+        }
+
+        public override void FixedTick()
+        {
+            if(_turningCoroutine == null)
+            {
+                _turningCoroutine = TurnDelay();
+                _ai.StartCoroutine(_turningCoroutine);
+            }
+        }
+
+        IEnumerator TurnDelay()
+        {
+            _agentController.Idle();
+            yield return new WaitForSeconds(2f); //TODO: Get delay from brain settings
+            _agentController.transform.localScale = new Vector3(_agentController.transform.localScale.x * -1, 1, 1);
+        }
+
+        public override void OnExit()
+        {
+            if (_turningCoroutine != null)
+                _ai.StopCoroutine(_turningCoroutine);
+            if (_transitionCoroutine != null)
+                _ai.StopCoroutine(_transitionCoroutine);
         }
     }
 }

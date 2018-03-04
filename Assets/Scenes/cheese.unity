@@ -723,6 +723,56 @@ Prefab:
       value: 
       objectReference: {fileID: 11400000, guid: 430e988854862e64bb315da2144a1ff8,
         type: 2}
+    - target: {fileID: 23402297818963756, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8bc70f5a261e3744285ff1e4c1a92994, type: 2}
+    - target: {fileID: 114110344567150946, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: _leftEdge
+      value: 
+      objectReference: {fileID: 1965267111}
+    - target: {fileID: 114110344567150946, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: _rightEdge
+      value: 
+      objectReference: {fileID: 1474975340}
+    - target: {fileID: 114110344567150946, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: MeleeRangeCollider
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114110344567150946, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: _brain
+      value: 
+      objectReference: {fileID: 11400000, guid: faf2b3c9461522b4583c8b478cea598a,
+        type: 2}
+    - target: {fileID: 4884257798661002, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0.8966411
+      objectReference: {fileID: 0}
+    - target: {fileID: 4884257798661002, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: -0.44275817
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350102820976444, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0.024693897
+      objectReference: {fileID: 0}
+    - target: {fileID: 4350102820976444, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.99969506
+      objectReference: {fileID: 0}
+    - target: {fileID: 4264337270963306, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0.284852
+      objectReference: {fileID: 0}
+    - target: {fileID: 4264337270963306, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.95857155
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
   m_IsPrefabParent: 0
@@ -1166,6 +1216,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1474975340 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4221541313861580, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+    type: 2}
+  m_PrefabInternal: {fileID: 1102577400}
 --- !u!1001 &1484129744
 Prefab:
   m_ObjectHideFlags: 0
@@ -1244,6 +1299,11 @@ Prefab:
       value: 
       objectReference: {fileID: 11400000, guid: 430e988854862e64bb315da2144a1ff8,
         type: 2}
+    - target: {fileID: 23402297818963756, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8bc70f5a261e3744285ff1e4c1a92994, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d6f5f07ef9060854ebc0b0fe6c219093, type: 2}
   m_IsPrefabParent: 0
@@ -1425,6 +1485,16 @@ Prefab:
       value: 
       objectReference: {fileID: 11400000, guid: 430e988854862e64bb315da2144a1ff8,
         type: 2}
+    - target: {fileID: 23619857070458988, guid: c3640ceeeea0b4548913fae8117405f1,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0d888903eca852d46a975b06b14c5b19, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c3640ceeeea0b4548913fae8117405f1, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &1965267111 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4125373961124038, guid: d6f5f07ef9060854ebc0b0fe6c219093,
+    type: 2}
+  m_PrefabInternal: {fileID: 1102577400}

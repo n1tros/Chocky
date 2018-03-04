@@ -20,4 +20,19 @@ public class AttackTestBrain : Brain
 
         ai.TargetAgent(_target);
     }
+
+    public override void DefaultIdleTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void DefaultPatrolTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void DefaultSearchTransition(AIController ai)
+    {
+        throw new NotImplementedException();
+    }
 }

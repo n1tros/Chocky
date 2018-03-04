@@ -6,26 +6,49 @@ namespace FSM
 {
     public class AIIdleState : State
     {
-        Rigidbody2D _rigid = null;
-        
-        public override void OnEnter(AgentController agent)
+        Rigidbody2D _rigid;
+        AIController _ai;
+        State _nextState;
+        float _transitionTime;
+        IEnumerator _transitionCoroutine;
+
+        public AIIdleState(AgentController agentcontoller) : base(agentcontoller)
         {
-            Debug.Log("Entering AIIdleState");
-            _rigid = agent.GetComponent<Rigidbody2D>();
-            agent.Idle();
+            _rigid = _agentController.GetComponent<Rigidbody2D>();
+            _ai = _agentController.GetComponent<AIController>();
+            _transitionTime = _ai.CurrentBrain.IdleTransitionTime;
         }
 
-        public override void OnExit()
+        public override void OnEnter()
         {
+            Debug.Log("Entering Idle State");
+            _agentController.Idle();
         }
 
         public override void Tick()
         {
+            if (_transitionCoroutine == null)
+            {
+                _transitionCoroutine = TransitionToDefaultState();
+                _ai.StartCoroutine(_transitionCoroutine);
+            }
         }
 
-        public override void FixedUpdate()
+        IEnumerator TransitionToDefaultState()
+        {
+            yield return new WaitForSeconds(_transitionTime);
+            _ai.CurrentBrain.DefaultIdleTransition(_ai);
+        }
+
+        public override void FixedTick()
         {
             _rigid.velocity = Vector2.zero;
+        }
+
+        public override void OnExit()
+        {
+            if (_transitionCoroutine != null)
+                _ai.StopCoroutine(_transitionCoroutine);
         }
 
     }

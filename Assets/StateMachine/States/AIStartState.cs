@@ -7,23 +7,18 @@ namespace FSM
 {
     public class AIStartState : State
     {
-        public override void OnEnter(AgentController agent)
-        {
-            Debug.Log(" Entering AIStartState");
-        }
+        private AIController _ai;
 
-        public override void OnExit()
+        public AIStartState(AgentController agentcontoller) : base(agentcontoller)
         {
         }
 
-        public override void Tick()
+        public override void OnEnter()
         {
+            Debug.Log(" Entering AIStartState " + _agentController.gameObject.name.ToString());
+            _ai = _agentController.GetComponent<AIController>();
+            _ai.StateMachine.ChangeState(new AIIdleState(_agentController));
         }
-
-        public override void FixedUpdate()
-        {
-        }
-
     }
 }
 

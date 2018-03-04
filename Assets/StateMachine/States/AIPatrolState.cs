@@ -7,29 +7,47 @@ namespace FSM
 {
     public class AIPatrolState : State
     {
-        private AgentController _agent;
         private AIController _ai;
+        private State _nextState;
+        private float _transitionTime;
+        private IEnumerator _transitionCoroutine;
 
         private bool _movingRight = false;
         private float _rightDirection = 1;
         private float _leftDirection = -1;
 
-        public override void OnEnter(AgentController agent)
+        public AIPatrolState(AgentController agentcontoller) : base(agentcontoller)
         {
-            _agent = agent;
-            _ai = _agent.GetComponent<AIController>();
+            _ai = _agentController.GetComponent<AIController>();
+            _transitionTime = _ai.CurrentBrain.PatrolTransitionTime;
         }
 
-        public override void OnExit()
+        public override void OnEnter()
         {
-            _agent.Idle();
+            
         }
 
         public override void Tick()
         {
+            if (_transitionCoroutine == null)
+            {
+                _transitionCoroutine = Transitiontimer();
+                _ai.StartCoroutine(_transitionCoroutine);
+            }
         }
 
-        public override void FixedUpdate()
+        public override void FixedTick()
+        {
+            PatrolBetweenTwoPoints();
+        }
+
+        private IEnumerator Transitiontimer()
+        {
+            yield return new WaitForSeconds(_transitionTime);
+            _ai.CurrentBrain.DefaultPatrolTransition(_ai);
+        }
+
+        private void PatrolBetweenTwoPoints()
         {
             if (_movingRight && AtRightEdge())
                 _movingRight = false;
@@ -38,19 +56,25 @@ namespace FSM
                 _movingRight = true;
 
             if (_movingRight)
-                _agent.Move(_rightDirection);
+                _agentController.Move(_rightDirection);
             else
-                _agent.Move(_leftDirection);
+                _agentController.Move(_leftDirection);
         }
 
         private bool AtLeftEdge()
         {
-            return _agent.transform.position.x < _ai.LeftEdge.position.x;
+            return _agentController.transform.position.x < _ai.LeftEdge.position.x;
         }
 
         private bool AtRightEdge()
         {
-            return _agent.transform.position.x > _ai.RightEdge.position.x;
+            return _agentController.transform.position.x > _ai.RightEdge.position.x;
+        }
+
+        public override void OnExit()
+        {
+            if (_transitionCoroutine != null)
+                _ai.StopCoroutine(_transitionCoroutine);
         }
     }
 }

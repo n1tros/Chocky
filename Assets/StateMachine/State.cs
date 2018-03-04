@@ -1,13 +1,20 @@
-﻿namespace FSM
+﻿using System.Collections;
+
+namespace FSM
 {
     public abstract class State
     {
         protected AgentController _agentController;
 
-        public abstract void OnEnter(AgentController agent);
-        public abstract void OnExit();
-        public abstract void Tick();
-        public abstract void FixedUpdate();
+        public virtual void OnEnter() { }
+        public virtual void OnExit() { }
+        public virtual void Tick() { }
+        public virtual void FixedTick() { }
+
+        public State (AgentController agentcontoller)
+        {
+            _agentController = agentcontoller;
+        }
     }
 }
 
