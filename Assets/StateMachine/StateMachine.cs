@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace FSM
 {
@@ -12,12 +10,10 @@ namespace FSM
         private State _previousState;
         public State PreviousState { get { return _previousState; } }
 
-        private StateFactory _stateFactory = null;
         private AgentController _agent = null;
 
         public StateMachine(AgentController agent)
         {
-            _stateFactory = new StateFactory();
             _agent = agent;
         }
 
@@ -26,9 +22,10 @@ namespace FSM
             if (_currentState == null)
                 ChangeCurrentStateAndCallOnEnter(newState);
 
-            else if (_currentState != newState)
+            else if (_currentState.GetType() != newState.GetType())
             {
                 ExitPreviousState();
+                Debug.Log(_agent.transform.parent.name + " changing state to " + newState.GetType().Name);
                 ChangeCurrentStateAndCallOnEnter(newState);
             }
         }

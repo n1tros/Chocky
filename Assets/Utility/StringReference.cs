@@ -3,6 +3,7 @@
     public const string Horizontal = "Horizontal";
     public const string Jump = "Jump";
     public const string Fire1 = "Fire1";
+    public const string Fire2 = "Fire2";
     public const string Fire3 = "Fire3";
     public const string WeaponToggle = "WeaponToggle";
 

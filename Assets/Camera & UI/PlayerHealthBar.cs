@@ -8,19 +8,11 @@ public class PlayerHealthBar : MonoBehaviour
 {
 
     RawImage _healthBarRawImage;
-    [SerializeField] AgentController _player;
-    Health _playerHealth;
 
-    private void Awake()
-    {
-        if (gameObject.tag != "UI")
-            _player = GetComponentInParent<AgentController>();
-    }
     // Use this for initialization
     void Start()
     {
         _healthBarRawImage = GetComponent<RawImage>();
-        _playerHealth = _player.GetComponent<Health>();
     }
 
     public void HealthUpdate(float currentHealth)

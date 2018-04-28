@@ -1,35 +1,40 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace FSM
+﻿namespace FSM
 {
-    public class AIMeleeAttackState : State
+    public class AIMeleeAttackState : AIState
     {
-        AgentController _target = null;
-        AIController _ai = null;
-
         public AIMeleeAttackState(AgentController agentcontoller) : base(agentcontoller)
         {
         }
 
         public override void OnEnter()
         {
-            _ai = _agentController.GetComponent<AIController>();
-            _target = _ai.Target;
             _agentController.DrawWeapon(true);
         }
 
-        public override void FixedTick()
+        public override void Tick()
+        {
+            base.Tick();
+
+            if (_ai.Target == null)
+                _ai.ChangeState(new AISearchState(_agentController));
+            else
+                AttackOrCloseRange();
+        }
+
+        private void AttackOrCloseRange()
         {
             if (_ai.TargetInMeleeRange)
             {
-                _agentController.Idle();
+                _agentController.MoveInput = 0;
                 _agentController.Attack();
             }
             else
-                _agentController.Move(_agentController.transform.position.x < _target.transform.position.x ? 1 : -1);
+                _agentController.MoveInput = _agentController.transform.position.x < _ai.Target.transform.position.x ? 1 : -1;
+        }
+
+        public override void OnExit()
+        {
+            _ai.InAttackState = false;
         }
     }
 }

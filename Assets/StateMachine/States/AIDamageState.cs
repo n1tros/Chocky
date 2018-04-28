@@ -1,25 +1,35 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FSM
 {
-    public class AIDamageState : State
+    public class AIDamageState : AIState
     {
-        Rigidbody2D _rigid = null;
-
         public AIDamageState(AgentController agentcontoller) : base(agentcontoller)
         {
         }
 
         public override void OnEnter()
         {
-            _rigid = _agentController.GetComponent<Rigidbody2D>();
+            _agentController.IsHit = true;
+            _ai.StartCoroutine(ReturnToPreviousState(_agentController.AgentSettings.KnockBackTime));
+        }
+        
+        private IEnumerator ReturnToPreviousState(float time)
+        {
+            yield return new WaitForSeconds(time);
+            _agentController.IsHit = false;
+            _ai.ChangeState(new AISearchState(_agentController));
         }
 
-        public override void FixedTick()
+        public override void Tick()
         {
-            _rigid.velocity = Vector2.zero;
+            _agentController.MoveInput = 0;
+        }
+
+        public override void OnExit()
+        {
+            _agentController.IsHit = false;
         }
     }
 }

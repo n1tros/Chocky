@@ -14,5 +14,7 @@ MonoBehaviour:
   _moveSpeed: 11
   _jumpHeight: 1250
   _rollSpeed: 20
-  _rollTime: 1
+  _rollTime: 1.2
   _invulnerabilityTimer: 0.2
+  _switchWeaponDelay: 0.4
+  crouchSpeed: 5

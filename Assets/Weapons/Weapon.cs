@@ -1,25 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Spine.Unity;
 using UnityEngine;
-using Spine.Unity;
 
-public abstract class Weapon : ScriptableObject
+public abstract class Weapon : Item
 {
-    public abstract float BaseDamage { get; }
-    public abstract float CurrentAttackTime { get; set; }
-    public abstract float Range { get; set; }
-    public abstract WeaponType Type { get; set; }
-    public abstract AmmoType Ammo { get; set; }
-    public abstract int BaseMaxAmmo { get; set; }
-    public abstract int BaseMaxClip { get; set; }
-    public abstract int CurrentAmmoInClip { get; set; }
-    public abstract int CurrentTotalAmmo { get; set; }
-    public abstract int CurrentMaxClip { get; set; }
-    public abstract int CurrentMaxAmmo { get; set; }
+    [SerializeField]
+    private AudioClip[] _weaponSounds;
+    public AudioClip[] WeaponSounds { get { return _weaponSounds; }}
 
-    public abstract void UseWeapon(WeaponController controller, SkeletonAnimation animator);
-    public abstract void DrawWeapon(WeaponController controller, SkeletonAnimation animator);
-    public abstract void HolsterWeapon(WeaponController controller, SkeletonAnimation animator);
-    public abstract void ReloadWeapon(WeaponController controller, SkeletonAnimation animator);
+    [SerializeField]
+    private float _knockBackForce;
+    public float KnockbackForce { get { return _knockBackForce; }}
 
+    [SerializeField]
+    private float _baseDamage;
+    public float BaseDamage { get { return _baseDamage; }}
+
+    [SerializeField]
+    protected string _weaponIdleAnimationName, _weaponReloadAnimation, _weaponFireAnimation;
+
+    [SerializeField]
+    private WeaponType _weaponType;
+    internal bool IsMelee;
+
+    public WeaponType Type
+    {
+        get { return _weaponType; }
+    }
+
+    public virtual void UseWeapon(WeaponController controller, SkeletonAnimation animation, ILauncher launcher) { }
+    public virtual void DrawWeapon(WeaponController controller, SkeletonAnimation animator)
+    {
+        controller.WeaponDrawn = true;
+        animator.state.SetAnimation(1, _weaponIdleAnimationName, true);
+    }
+    public virtual void HolsterWeapon(WeaponController controller, SkeletonAnimation animator)
+    {
+        controller.WeaponDrawn = false;
+        animator.state.SetAnimation(1, "reset", true);
+    }
+    public virtual void ReloadWeapon(WeaponController controller, SkeletonAnimation animator) { }
 }

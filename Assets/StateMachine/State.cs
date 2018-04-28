@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace FSM
+﻿namespace FSM
 {
     public abstract class State
     {

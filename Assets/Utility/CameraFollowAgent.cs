@@ -15,6 +15,7 @@ public class CameraFollowAgent : MonoBehaviour
     private void Start()
     {
         FollowTarget = true;
+        _target = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void FixedUpdate()

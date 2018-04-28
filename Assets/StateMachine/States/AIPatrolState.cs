@@ -1,49 +1,32 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace FSM
 {
-    public class AIPatrolState : State
+    public class AIPatrolState : AIState
     {
-        private AIController _ai;
-        private State _nextState;
-        private float _transitionTime;
-        private IEnumerator _transitionCoroutine;
-
         private bool _movingRight = false;
         private float _rightDirection = 1;
         private float _leftDirection = -1;
 
         public AIPatrolState(AgentController agentcontoller) : base(agentcontoller)
         {
-            _ai = _agentController.GetComponent<AIController>();
-            _transitionTime = _ai.CurrentBrain.PatrolTransitionTime;
         }
 
         public override void OnEnter()
         {
-            
+            _ai.StartCoroutine(Transitiontimer());
         }
 
         public override void Tick()
         {
-            if (_transitionCoroutine == null)
-            {
-                _transitionCoroutine = Transitiontimer();
-                _ai.StartCoroutine(_transitionCoroutine);
-            }
-        }
-
-        public override void FixedTick()
-        {
+            base.Tick();
             PatrolBetweenTwoPoints();
         }
 
         private IEnumerator Transitiontimer()
         {
-            yield return new WaitForSeconds(_transitionTime);
+            yield return new WaitForSeconds(_ai.CurrentBrain.PatrolTransitionTime);
             _ai.CurrentBrain.DefaultPatrolTransition(_ai);
         }
 
@@ -51,14 +34,13 @@ namespace FSM
         {
             if (_movingRight && AtRightEdge())
                 _movingRight = false;
-
             if (!_movingRight && AtLeftEdge())
                 _movingRight = true;
 
             if (_movingRight)
-                _agentController.Move(_rightDirection);
+                _agentController.MoveInput = _rightDirection;
             else
-                _agentController.Move(_leftDirection);
+                _agentController.MoveInput = _leftDirection;
         }
 
         private bool AtLeftEdge()
@@ -73,8 +55,7 @@ namespace FSM
 
         public override void OnExit()
         {
-            if (_transitionCoroutine != null)
-                _ai.StopCoroutine(_transitionCoroutine);
+            _ai.StopCoroutine(Transitiontimer());
         }
     }
 }

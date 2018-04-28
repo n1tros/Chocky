@@ -1,6 +1,4 @@
 ﻿using FSM;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(AgentController))]
@@ -19,11 +17,17 @@ public class AIController : MonoBehaviour
         set { _brain = value; }
     }
 
+    [SerializeField]
+    public bool _isMelee;
+
+    public bool IsAttacking { get; set; }
+    public bool InAttackState { get; set; }
+
     private StateMachine _stateMachine = null;
     public StateMachine StateMachine { get { return _stateMachine; } }
 
-    private AgentController _agent = null;
-
+    private AgentController _agent;
+    
     public bool TargetInMeleeRange { get; set; }
     public bool TargetInGunRange { get; set; }
 
@@ -47,15 +51,13 @@ public class AIController : MonoBehaviour
     {
         Agent = GetComponent<AgentController>();
         _stateMachine = new StateMachine(Agent);
-        Debug.Log(_stateMachine);
-        TargetInMeleeRange = false;
-        TargetInGunRange = false;
         _stateMachine.ChangeState(new AIStartState(_agent));
     }
 
     private void Update()
     {
         _stateMachine.CurrentState.Tick();
+       // Debug.Log(_stateMachine.CurrentState.GetType().ToString());
     }
 
     private void FixedUpdate()
@@ -63,36 +65,9 @@ public class AIController : MonoBehaviour
         _stateMachine.CurrentState.FixedTick();
     }
 
-    public void Patrol()
-    {
-        _stateMachine.ChangeState(new AIPatrolState(_agent));
-    }
-
-    public void Idle()
-    {
-        _stateMachine.ChangeState(new AIIdleState(_agent));
-    }
-
-    public void Search()
-    {
-        _stateMachine.ChangeState(new AISearchState(_agent));
-    }
-
     public void TargetAgent(AgentController agent)
     {
         Target = agent;
-
-        var weapon = GetComponent<WeaponController>();
-        if(weapon.Current.Type == WeaponType.Melee)
-        {
-            MeleeRangeCollider.enabled = true;
-            _stateMachine.ChangeState(new AIMeleeAttackState(_agent));
-        }
-        else if(weapon.Current.Type == WeaponType.Ranged)
-        {
-            _stateMachine.ChangeState(new AIRangedAttackState(_agent));
-        }
-
     }
 
     public void TargetLoss()
@@ -106,19 +81,20 @@ public class AIController : MonoBehaviour
         }
     }
 
+    public void ChangeState(AIState state)
+    {
+        if (_stateMachine.CurrentState != state)
+            _stateMachine.ChangeState(state);
+    }
+
     public void Death()
     {
-        _stateMachine.ChangeState(new AIDeathState(_agent));
+        if(_stateMachine.CurrentState.GetType() != typeof(AIDeathState))
+            _stateMachine.ChangeState(new AIDeathState(_agent));
     }
 
     public void TakeDamage()
     {
         _stateMachine.ChangeState(new AIDamageState(_agent));
     }
-
-    public void Attack()
-    {
-
-    }
-
 }

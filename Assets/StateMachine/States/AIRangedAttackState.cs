@@ -1,35 +1,34 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace FSM
+﻿namespace FSM
 {
-    public class AIRangedAttackState : State
+    public class AIRangedAttackState : AIState
     {
-        AgentController _target = null;
-        AIController _ai = null;
-
         public AIRangedAttackState(AgentController agentcontoller) : base(agentcontoller)
         {
         }
 
         public override void OnEnter()
         {
-            _ai = _agentController.GetComponent<AIController>();
-            _target = _ai.Target;
             _agentController.DrawWeapon(true);
         }
 
-        public override void FixedTick()
+        public override void Tick()
         {
-            if (_ai.Target != null)
+            base.Tick();
+
+            if (_ai.Target == null)
             {
-                _agentController.Idle();
-                _ai.CurrentBrain.AttackPattern(_ai);
+                _ai.ChangeState(new AISearchState(_agentController));
             }
             else
-                _agentController.Move(_agentController.transform.position.x < _target.transform.position.x ? 1 : -1);
+            {
+                _agentController.MoveInput = 0;
+                _ai.CurrentBrain.AttackPattern(_ai);
+            }
+        }
+
+        public override void OnExit()
+        {
+            _ai.InAttackState = false;
         }
     }
 }

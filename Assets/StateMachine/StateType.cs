@@ -5,6 +5,7 @@
     MeleeIdle,
     Movement,
     Jumping,
+    Reloading,
     Immobile,
     Falling,
     Attacking,
