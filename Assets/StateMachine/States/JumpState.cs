@@ -1,30 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using FSM;
 using UnityEngine;
 
-public class JumpState : PlayerMovementState
+public class JumpState : State
 {
-    public JumpState(PlayerInput input) : base(input)
+    public JumpState(Agent agent) : base(agent)
     {
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
-        _input.Agent.Jump();
-        _input.Agent.IsJumping = true;
-        Debug.Log("Entering Jump state");
+        _agent.GroundCheck.IsGrounded = false;
+        _agentBody.Jump();
     }
 
     public override void Tick()
     {
-        base.Tick();
+        if (_agent.GroundCheck.IsGrounded)
+        {
+            _stateMachine.ChangeState(new GroundedState(_agent));
+            return;
+        }
 
-        if (_input.Agent.IsFalling)
-            _input.ChangeState( new FallState(_input));
+        base.Tick();
     }
 
-    public override void Exit()
+    public override void OnExit()
     {
-        _input.Agent.IsJumping = false;
     }
 }

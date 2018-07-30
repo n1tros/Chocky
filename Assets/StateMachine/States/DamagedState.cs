@@ -1,30 +1,33 @@
 ﻿using System.Collections;
 using UnityEngine;
+using FSM;
+using System;
 
-public class DamagedState : PlayerMovementState
+public class DamagedState : State
 {
-    public DamagedState(PlayerInput input) : base(input)
+    public DamagedState(Agent agent) : base(agent)
     {
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
-        _input.Agent.IsHit = true;
-        _input.StartCoroutine(DamageCountdown());
+        _agent.StartCoroutine(DamagedTime());
+        _agent.Body.TakeDamage();
+        _agent.Physics.IsImmobile = true;
     }
 
-    IEnumerator DamageCountdown()
+    public override void Tick()
     {
-        yield return new WaitForSeconds(_input.Agent.AgentSettings.InvulnerabilityTime);
-        _input.ChangeState(new GroundedState(_input));
     }
 
-    public override void Exit()
+    private IEnumerator DamagedTime()
     {
-        _input.StopCoroutine(DamageCountdown());
-        _input.Agent.IsHit = false;
+        yield return new WaitForSeconds(_agent.Settings.InvulnerabilityTimeWhenHit);
+        _agent.StateMachine.ChangeState(new GroundedState(_agent));
     }
 
-    public override void Tick() {}
-    public override void FixedTick() {}
+    public override void OnExit()
+    {
+        _agent.Physics.IsImmobile = false;
+    }
 }

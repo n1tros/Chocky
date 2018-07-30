@@ -1,13 +1,28 @@
 ﻿using UnityEngine;
 
-public abstract class AgentSettings : ScriptableObject
+[CreateAssetMenu(menuName = "Agent/AgentSettings")]
+public class AgentSettings : ScriptableObject
 {
-    public abstract float MoveSpeed { get; }    
-    public abstract float JumpHeight { get; }
-    public abstract float RollSpeed { get; }
-    public abstract float InvulnerabilityTime { get; }
-    public abstract float RollTime { get; }
-    public abstract float SwitchWeaponDelay { get; }
-    public virtual float CrouchSpeed { get; set; }
-    public virtual float KnockBackTime { get; set; }
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _jumpPower;
+    [SerializeField] private float _rollPower;
+    [SerializeField] private float _invulnerabilityTimeWhenHit;
+    [SerializeField] private float _rollInvulnerabilityTime;
+    [SerializeField] private float _weaponSwitchDelay;
+    [SerializeField] private float _crouchWalkingSpeed;
+    [SerializeField] private int _xpOnDeath;
+    [SerializeField] private bool _useAI;
+    [SerializeField] private bool _useMeleeAsMain;
+
+    public float MoveSpeed { get { return _moveSpeed; } }    
+    public float JumpPower { get { return _jumpPower; } }
+    public float RollPower { get { return _rollPower; } }
+    public float InvulnerabilityTimeWhenHit { get { return _invulnerabilityTimeWhenHit; } }
+    public float RollInvulnerabilityTime { get { return _rollInvulnerabilityTime; } }
+    public float WeaponSwitchDelay { get { return _weaponSwitchDelay; } }
+    public float CrouchWalkingSpeed { get { return _crouchWalkingSpeed; } }
+    public bool UseAI { get { return _useAI; } }
+    public bool UseMeleeAsMain { get { return _useMeleeAsMain; } }
+    public int XpOnDeath { get { return _xpOnDeath; } }
+
 }

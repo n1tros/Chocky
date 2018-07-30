@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e8b54a0db21b5348a0247a047d11c08, type: 3}
+  m_Name: AI Settings
+  m_EditorClassIdentifier: 
+  _moveSpeed: 4.46
+  _jumpPower: 0
+  _rollPower: 0
+  _invulnerabilityTimeWhenHit: 0.2
+  _rollInvulnerabilityTime: 0
+  _weaponSwitchDelay: 0
+  _crouchWalkingSpeed: 0
+  _xpOnDeath: 20
+  _useAI: 1
+  _useMeleeAsMain: 0

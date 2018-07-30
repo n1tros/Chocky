@@ -1,19 +1,27 @@
-﻿using System.Collections;
+﻿using FSM;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathState : PlayerMovementState
+public class DeathState : State
 {
-    public DeathState(PlayerInput input) : base(input)
+    public DeathState(Agent agent) : base(agent)
     {
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
-        _input.Agent.Dead();   
+        _agent.Body.Dead();
+        _agent.Physics.IsImmobile = true;
     }
 
     public override void Tick()
     {
+        
+    }
+
+    public override void OnExit()
+    {
+        _agent.Physics.IsImmobile = false;
     }
 }

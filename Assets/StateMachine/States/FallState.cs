@@ -1,26 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using FSM;
 using UnityEngine;
 
-public class FallState : PlayerMovementState
+public class FallState : State
 {
-    public FallState(PlayerInput input) : base(input)
+    public FallState(Agent agent) : base(agent)
     {
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
-        _input.Agent.Fall();
-        Debug.Log("Enter fall state");
+        _agent.Body.Fall();
     }
 
     public override void Tick()
     {
-        base.Tick();
+        if (_agent.GroundCheck.IsGrounded)
+            _agent.StateMachine.ChangeState(new GroundedState(_agent));
+        else if (!_agent.Physics.IsFalling)
+            _agent.StateMachine.ChangeState(new JumpState(_agent));
 
-        if (_input.Agent.IsGrounded)
-        {
-            _input.ChangeState(new GroundedState(_input));
-        }
+        base.Tick();
+    }
+
+    public override void OnExit()
+    {
+        _agent.Body.Land();
     }
 }

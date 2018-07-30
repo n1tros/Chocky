@@ -6,7 +6,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(RawImage))]
 public class PlayerHealthBar : MonoBehaviour
 {
-
     RawImage _healthBarRawImage;
 
     // Use this for initialization
@@ -20,6 +19,4 @@ public class PlayerHealthBar : MonoBehaviour
         float xValue = -(currentHealth / 2f) - 0.5f;
         _healthBarRawImage.uvRect = new Rect(xValue, 0f, 0.5f, 1f);
     }
-
-
 }

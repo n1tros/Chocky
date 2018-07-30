@@ -35,7 +35,7 @@ TagManager:
   - Wall
   - Roll
   - Dead
-  - 
+  - Melee
   - 
   - 
   - 
@@ -52,4 +52,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Agent
+    uniqueID: 551279255
     locked: 0

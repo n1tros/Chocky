@@ -1,9 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(menuName = "Weapon/Shotgun")]
-public class Shotgun : GunWeapon
+public class Shotgun : Weapon
 {
-
+    private void OnEnable()
+    {
+        _weaponIdleAnimationName = "gunIdle";
+        _weaponReloadAnimation = "gunReload1";
+        _weaponFireAnimation = "gunShoot";
+        CurrentDamage = BaseDamage;
+        CurrentMaxClip = BaseMaxClip;
+        CurrentAmmo = BaseMaxAmmo;
+    }
 }

@@ -1,22 +1,71 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-/// <summary>
-/// Physically move the agent and provides interface to RigidBody
-/// </summary>
-[RequireComponent (typeof(Rigidbody2D))]
-[RequireComponent (typeof(AgentController))]
-public class AgentPhysics : MonoBehaviour
+public class AgentPhysics
 {
-    private Rigidbody2D _rigidbody = null;
-    private AgentController _agentController = null;
+    private Rigidbody2D _rigidbody;
+    private Transform _transform;
+    private Agent _agent;
+
+    public bool IsFalling { get; private set; }
+    public bool IsImmobile { get; set; }
+
+    private Transform _edgeDetection;
+
+    public AgentPhysics(Transform transform, Rigidbody2D rigid, Agent agent)
+    {
+        _rigidbody = rigid;
+        _transform = transform;
+        _agent = agent;
+        _agent.Body.OnJump += Jump;
+        _agent.Body.OnRoll += Roll;
+    }
+
+    public void FixedTick()
+    {
+        IsFalling = _rigidbody.velocity.y < -0.1;
+
+        if (!IsImmobile)
+            Move(_agent.Body.MoveInput);
+    }
+
+    private void Move(float x)
+    {
+        FaceDirectionOfTravel(x);
+        _rigidbody.velocity = new Vector3(x, _rigidbody.velocity.y, 0);
+    }
+
+    private void FaceDirectionOfTravel(float x)
+    {
+        if ((x > 0 && _transform.localScale.x < 0) || (x < 0 && _transform.localScale.x > 0))
+            _transform.localScale = new Vector3(_transform.localScale.x * -1, _transform.localScale.y, _transform.localScale.z);
+    }
+
+    public void Jump()
+    {
+        _rigidbody.AddForce(new Vector2(0, _agent.Settings.JumpPower));
+    }
+
+    public void Roll()
+    {
+        _rigidbody.velocity = new Vector3(_agent.Settings.RollPower * _agent.transform.localScale.x, _rigidbody.velocity.y, 0);
+    }
+
+    public void Impact(float forceAmount, Vector2 Direction)
+    {
+        var knockback = new Vector2(Direction.x * forceAmount, 0);
+        _rigidbody.AddForce(knockback, ForceMode2D.Impulse);
+    }
+
+
+}
+    /*
+    private Agent _agent;
 
     private int _baseLayer, _rollLayer;
 
     private void Awake()
     {
-        _agentController = GetComponent<AgentController>();
+        _agent = GetComponent<Agent>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
@@ -52,13 +101,16 @@ public class AgentPhysics : MonoBehaviour
 
     public void FixedUpdate()
     {
+        /*
         if (_agentController.IsDead)
             ZeroVelocity();
 
         _agentController.IsFalling = _rigidbody.velocity.y < -0.1;
 
-        if(!_agentController.IsRolling)
-            Move(_agentController.MoveInput);
+        if(!_agentController.IsRolling) 
+        Move(_agent.MoveInput);
+        
+            
     }
 
     public bool IsFalling()
@@ -88,19 +140,6 @@ public class AgentPhysics : MonoBehaviour
         _rigidbody.constraints = RigidbodyConstraints2D.None;
     }
     
-    private void OnEnable()
-    {
-        _agentController.OnJump += Jump;
-        _agentController.OnDeath += ZeroVelocity;
-        _agentController.OnRoll += Roll;
-        _agentController.OnEndRoll += EndRoll;
-    }
 
-    private void OnDisable()
-    {
-        _agentController.OnJump -= Jump;
-        _agentController.OnDeath -= ZeroVelocity;
-        _agentController.OnRoll -= Roll;
-        _agentController.OnEndRoll -= EndRoll;
-    }
 }
+*/

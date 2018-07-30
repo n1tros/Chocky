@@ -10,13 +10,6 @@ namespace FSM
         private State _previousState;
         public State PreviousState { get { return _previousState; } }
 
-        private AgentController _agent = null;
-
-        public StateMachine(AgentController agent)
-        {
-            _agent = agent;
-        }
-
         public void ChangeState(State newState)
         {
             if (_currentState == null)
@@ -25,7 +18,8 @@ namespace FSM
             else if (_currentState.GetType() != newState.GetType())
             {
                 ExitPreviousState();
-                Debug.Log(_agent.transform.parent.name + " changing state to " + newState.GetType().Name);
+                //Debug.Log(this.GetType() + " Enter newState " + newState.GetType());
+
                 ChangeCurrentStateAndCallOnEnter(newState);
             }
         }

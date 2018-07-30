@@ -1,35 +1,31 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class DamageDisplay : MonoBehaviour {
+public class DamageDisplay : MonoBehaviour
+{
 
-    private AgentController _agent;
+    private Agent _agent;
     [SerializeField] private float _duration = 3f;
     [SerializeField] private Vector2 _startPosition, _endPosition;
-    [SerializeField] private Text _damage;
+    [SerializeField] private GameObject _damage;
 
     void Awake()
     {
-        _agent = GetComponentInParent<AgentController>();
+        _agent = GetComponentInParent<Agent>();
     }
 
-    void TakeDamage(float amount)
+    void TakeDamage()
     {
-        var damageObject = Instantiate(_damage, transform);
-        damageObject.text = amount.ToString();
-        damageObject.rectTransform.anchoredPosition = _startPosition;
-        Destroy(damageObject, _duration);
+
     }
 
     private void OnEnable()
     {
-        _agent.OnTakeDamage += TakeDamage;
+        _agent.Body.OnTakeDamage += TakeDamage;
     }
 
     private void OnDisable()
     {
-        _agent.OnTakeDamage -= TakeDamage;
+        //_agent.OnTakeDamage -= TakeDamage;
     }
 }

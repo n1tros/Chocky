@@ -1,28 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using FSM;
 using UnityEngine;
 
-public class GroundedState : PlayerMovementState
+public class GroundedState : State
 {
-    public GroundedState(PlayerInput input) : base(input)
+    public GroundedState(Agent agent) : base(agent)
     {
-    }
-
-    public override void Enter()
-    {
-        Debug.Log("Enter state 1");
     }
 
     public override void Tick()
     {
         base.Tick();
-
-        if (_input.Crouch())
-            _input.ChangeState(new CrouchState(_input));
-
-        if (_input.Jump())
+        if (_brain.Jump == true)
         {
-            _input.ChangeState(new JumpState(_input));
+            _stateMachine.ChangeState(new JumpState(_agent));
         }
+
+        if (_brain.Crouch == true)
+            _agent.StateMachine.ChangeState(new CrouchState(_agent));
     }
 }

@@ -1,17 +1,9 @@
 ﻿using Spine.Unity;
-using UnityEngine;
 using Spine;
+using UnityEngine;
 
-/// <summary>
-/// Provides top layer control over animations for the agent 
-/// </summary>
-[RequireComponent(typeof(AgentController))]
-[RequireComponent(typeof(SkeletonAnimation))]
-public class AgentAnimation : MonoBehaviour
+public class AgentAnimation
 {
-    private SkeletonAnimation _animation = null;
-    private AgentController _agentController = null;
-
     //Todo: Add these to a static struct or some such object
     private string _run = "run";
     private string _idle = "idle";
@@ -22,6 +14,8 @@ public class AgentAnimation : MonoBehaviour
     private string _land = "land";
     private string _crouchIdle = "crouchIdle";
     private string _crouchWalk = "crouchWalk";
+    private string _takeDamage = "hit1";
+    private string _death = "hitBig";
 
     private Spine.Animation _runAnimation;
     private Spine.Animation _idleAnimation;
@@ -32,24 +26,31 @@ public class AgentAnimation : MonoBehaviour
     private Spine.Animation _landAnimation;
     private Spine.Animation _crouchIdleAnimation;
     private Spine.Animation _crouchWalkAnimation;
-    private Bone _leftShoulder;
-    private Bone _rightShoulder;
-    private float _crouchAngle = 7.23f;
-    private float _crouchOffset = 13f;
+    private Spine.Animation _takeDamageAnimation;
+    private Spine.Animation _deathAnimation;
     private bool _isMoving;
 
-    public Spine.AnimationState Animation { get { return _animation.state; } }
+    private readonly SkeletonAnimation _animation;
+    private readonly AgentBody _body;
+    private readonly Agent _agent;
 
-    private void Awake()
+    public AgentAnimation(Agent agent, SkeletonAnimation animation)
     {
-        _agentController = GetComponent<AgentController>();
-        _animation = GetComponent<SkeletonAnimation>();
+        _agent = agent;
+        _animation = animation;
+        _body = agent.Body;
+        _body.OnJump += Jump;
+        _body.OnFall += Fall;
+        _body.OnRoll += Roll;
+        _body.OnCrouch += Crouch;
+        _body.OnTakeDamage += TakeDamage;
+        _body.OnDeath += Death;
     }
 
-    private void Start()
+    public void CacheAgentAnimationOnStart()
     {
-        _leftShoulder = _animation.skeleton.FindBone("arm_upper_far");
-        _rightShoulder = _animation.skeleton.FindBone("arm_upper_near");
+        // = _animation.skeleton.FindBone("arm_upper_far");
+        //_rightShoulder = _animation.skeleton.FindBone("arm_upper_near");
         _runAnimation = _animation.skeleton.Data.FindAnimation(_run);
         _idleAnimation = _animation.skeleton.Data.FindAnimation(_idle);
         _jumpAnimation = _animation.skeleton.Data.FindAnimation(_fall);
@@ -59,9 +60,106 @@ public class AgentAnimation : MonoBehaviour
         _crouchIdleAnimation = _animation.skeleton.Data.FindAnimation(_crouchIdle);
         _crouchWalkAnimation = _animation.skeleton.Data.FindAnimation(_crouchWalk);
         _fallAnimation = _animation.skeleton.Data.FindAnimation(_fall);
-        _animation.UpdateLocal += HandleUpdateLocal;
+        _takeDamageAnimation = _animation.skeleton.Data.FindAnimation(_takeDamage);
+        _deathAnimation = _animation.skeleton.Data.FindAnimation(_death);
+        //_animation.UpdateLocal += HandleUpdateLocal;
     }
 
+    public void Tick()
+    {
+        // Check state and play animation in order
+        if (_agent.StateMachine.CurrentState is GroundedState || _agent.StateMachine.CurrentState is CrouchState)
+        {
+            if (_body.MoveInput == 0)
+                PlayIdleAnimation();
+            else
+                PlayWalkOrRunAnimations(_body.MoveInput);
+        }
+    }
+
+    private void PlayIdleAnimation()
+    {
+        if (_agent.StateMachine.CurrentState is GroundedState && _animation.state.GetCurrent(0).Animation != _idleAnimation)
+        {
+            _animation.state.SetAnimation(0, _idle, true);
+        }
+        else if (_agent.StateMachine.CurrentState is CrouchState && _animation.state.GetCurrent(0).Animation != _crouchIdleAnimation)
+        {
+            _animation.state.SetAnimation(0, _crouchIdle, true);
+        }
+    }
+
+    private void PlayWalkOrRunAnimations(float x)
+    {
+        if (_agent.StateMachine.CurrentState is GroundedState)
+        {
+            if ((x > 6 || x < -6) && _animation.state.GetCurrent(0).Animation != _runAnimation)
+            {
+                _animation.state.SetAnimation(0, _run, true);
+            }
+
+            if ((x <= 6 && x >= -6) && _animation.state.GetCurrent(0).Animation != _walkAnimation)
+                _animation.state.SetAnimation(0, _walk, true);
+        }
+        else if (_agent.StateMachine.CurrentState is CrouchState && _animation.state.GetCurrent(0).Animation != _crouchWalkAnimation)
+        {
+            _animation.state.SetAnimation(0, _crouchWalk, true);
+        }
+
+    }
+
+    private void Jump()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _jumpAnimation)
+        {
+            _animation.state.SetAnimation(0, _jump, false);
+        }
+    }
+
+    private void Fall()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _fallAnimation)
+        {
+            _animation.state.SetAnimation(0, _fall, false);
+        }
+    }
+
+    private void Land()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _landAnimation)
+        {
+            _animation.state.SetAnimation(0, _land, false);
+        }
+    }
+
+    private void Roll()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _rollAnimation)
+        {
+            _animation.state.SetAnimation(0, _roll, false).Complete += delegate {  };
+        }
+    }
+
+    private void TakeDamage()
+    {
+        _animation.state.SetAnimation(0, "hit1", false).Complete += delegate { };
+    }
+
+    private void Crouch()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _crouchIdleAnimation)
+        {
+            _animation.state.SetAnimation(0, _crouchIdle, true);
+        }
+    }
+
+    private void Death()
+    {
+        if (_animation.state.GetCurrent(0).Animation != _deathAnimation)
+            _animation.state.SetAnimation(0, _death, false);
+    }
+}
+    /*
     void HandleUpdateLocal(ISkeletonAnimation skeletonRenderer)
     {
         if (_agentController.IsCrouched)
@@ -101,16 +199,7 @@ public class AgentAnimation : MonoBehaviour
         return x > -0.1 && x < 0.1;
     }
 
-    private void PlayWalkOrRunAnimations(float x)
-    {
-        if ((x > 6 || x < -6) && _animation.state.GetCurrent(0).Animation != _runAnimation)
-        {
-            _animation.state.SetAnimation(0, _run, true);
-        }
 
-        if ((x <= 6 && x >= -6) && _animation.state.GetCurrent(0).Animation != _walkAnimation)
-            _animation.state.SetAnimation(0, _walk, true);
-    }
 
     private void Idle()
     {
@@ -120,51 +209,17 @@ public class AgentAnimation : MonoBehaviour
         }
     }
 
-    private void Jump(float jumpHeight)
-    {
-        if (_animation.state.GetCurrent(0).Animation != _jumpAnimation)
-        {
-            _animation.state.SetAnimation(0, _jump, false);
-        }
-    }
 
-    private void Fall()
-    {
-        if (_animation.state.GetCurrent(0).Animation != _fallAnimation)
-        {
-            Debug.Log("Falling");
-            _animation.state.SetAnimation(0, _fall, false);
-        }
-    }
 
-    private void Land()
-    {
-        if (_animation.state.GetCurrent(0).Animation != _landAnimation)
-        {
-            Debug.Log("Landing");
-            _animation.state.SetAnimation(0, _land, false);
-        }
-    }
 
-    private void TakeDamage(float amount)
-    {
-        _animation.state.SetAnimation(0, "hit1", false).Complete += delegate {  };
-    }
 
-    private void Death()
-    {
-        Debug.Log("death Anim");
-        _animation.state.SetAnimation(0, "hitBig", false);
-    }
 
-    private void Roll(float rollSpeed)
-    {
-        if (_animation.state.GetCurrent(0).Animation != _rollAnimation)
-        {
-            Debug.Log("Rolling anim");
-            _animation.state.SetAnimation(0, _roll, false).Complete += delegate { _agentController.EndRoll(); };
-        }
-    }
+
+
+
+
+
+
 
     private void Crouch(float x)
     {
@@ -221,3 +276,4 @@ public class AgentAnimation : MonoBehaviour
         _animation.UpdateLocal -= HandleUpdateLocal;
     }
 }
+*/

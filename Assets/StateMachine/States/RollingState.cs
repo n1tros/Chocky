@@ -1,45 +1,45 @@
-﻿
+﻿using FSM;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RollingState : PlayerMovementState
+public class RollingState : State
 {
-    IEnumerator _roll;
+    private int _baseLayer, _rollLayer;
 
-    public RollingState(PlayerInput input) : base(input)
+    public RollingState(Agent agent) : base(agent)
     {
+        _agent.Physics.IsImmobile = true;
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
-        if (_roll == null)
-        {
-            _roll = Roll();
-            _input.StartCoroutine(_roll);
-        }
+        _baseLayer = _agent.gameObject.layer;
+        _rollLayer = LayerMask.NameToLayer("Roll");
+        _agent.StartCoroutine(Roll());
+        _agent.gameObject.layer = _rollLayer;
     }
 
     private IEnumerator Roll()
     {
-        _input.Agent.IsInvulnerable = true;
-        _input.Agent.IsRolling = true;
-        _input.Agent.Roll();
-        //TODO: need a way to get the rolling timer in here.
+        //_input.Agent.IsInvulnerable = true;
+        _agent.Body.Roll();
         yield return new WaitForSeconds(0.5f);
-        _input.ChangeState(new GroundedState(_input));
+        _agent.StateMachine.ChangeState(new GroundedState(_agent));
     }
 
     public override void Tick()
     {
+        /*
         if (_input.Agent.IsDead)
             _input.ChangeState(new DeathState(_input));
+            */
     }
 
-    public override void Exit()
+    public override void OnExit()
     {
-        _input.Agent.IsRolling = false;
-        _input.Agent.IsInvulnerable = false;
-        _input.StopCoroutine(Roll());
+        //_input.Agent.IsInvulnerable = false;
+        _agent.gameObject.layer = _baseLayer;
+        _agent.StopCoroutine(Roll());
+        _agent.Physics.IsImmobile = false;
     }
 }
