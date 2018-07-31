@@ -14,7 +14,9 @@ public class MeleeCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("HitBox") && collision.gameObject != transform.parent.gameObject)
+        if (collision.CompareTag("HitBox") && 
+            collision.gameObject != transform.parent.gameObject &&
+            collision.transform.parent.gameObject.layer != LayerMask.NameToLayer("Roll"))
         {
             GetComponent<BoxCollider2D>().enabled = false;
             CreateParticleObject(collision);

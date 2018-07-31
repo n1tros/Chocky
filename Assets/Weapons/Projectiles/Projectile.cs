@@ -17,7 +17,9 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("HitBox") && !collision.transform.parent.gameObject.CompareTag(_parentTag))
+        if (collision.CompareTag("HitBox") && 
+            !collision.transform.parent.gameObject.CompareTag(_parentTag) && 
+            collision.transform.parent.gameObject.layer != LayerMask.NameToLayer("Roll"))
         {
             Vector2 knockBackDir = (collision.transform.position - transform.position).normalized;
             CreateParticleObject(collision);
